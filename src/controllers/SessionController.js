@@ -6,21 +6,21 @@ const { compare } = require("bcryptjs")
 class SessionController {
   async create(request, response) {
     const { email, password } = request.body
-    const admin = await knex("admins").where({ email }).first()
+    const user = await knex("users").where({ email }).first()
 
-    if(!admin){
+    if(!user){
       throw new AppError("E-mail ou senha inválidos",401)
     }
 
-    const passwordMatched = await compare(password, admin.password)
+    const passwordMatched = await compare(password, user.password)
 
     if(!passwordMatched){
       throw new AppError("E-mail ou senha inválidos",401)
     }
 
     const { secret, expiresIn } = authConfig.jwt
-    const token = sign({}, secret, {
-      subject: String(admin.id),
+    const token = sign({role: user.role}, secret, {
+      subject: String(user.id),
       expiresIn
     })
 
@@ -30,9 +30,9 @@ class SessionController {
       sameSite: "none",
       secure: true
     })
-    delete admin.password
+    delete user.password
 
-    return response.json({ admin, token })
+    return response.json({ user, token })
   }
 }
 

@@ -1,13 +1,13 @@
 const AppError = require('../utils/AppError')
 const knex = require("../database/knex")
 
-class adminsValidatedController {
+class UserValidatedController {
   async index(request, response) {
-    const { admin } = request
+    const { user } = request
 
-    const checkadminExists = await knex("admins").where({ id: admin.id })
+    const checkUserExists = await knex("user").where({ id: user.id })
 
-    if (checkadminExists.length === 0){
+    if (checkUserExists.length === 0){
       throw new AppError("Não autorizado para acessar este recurso", 401)
     }
 
@@ -16,4 +16,4 @@ class adminsValidatedController {
 
 }
 
-module.exports = adminsValidatedController
+module.exports = UserValidatedController

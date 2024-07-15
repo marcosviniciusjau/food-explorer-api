@@ -1,15 +1,15 @@
 const { Router } = require('express')
 
-const adminsRoutes = require('./admin.routes')
+const usersRoutes = require('./user.routes')
 const dishesRoutes = require('./dishes.routes')
-const movieTagsRoutes = require('./movie_tags.routes')
+const ingredientsRoutes = require('./ingredients.routes')
 const sessionsRoutes = require('./sessions.routes')
 
 const routes = Router()
 
-routes.use('/admins', adminsRoutes)
+routes.use('/users', usersRoutes)
 routes.use('/dishes', dishesRoutes)
-routes.use('/movie_tags', movieTagsRoutes)
+routes.use('/ingredients', ingredientsRoutes)
 routes.use('/sessions', sessionsRoutes)
 
 module.exports = routes

@@ -1,11 +1,11 @@
 const { Router } = require('express')
 
-const MovieTagsController = require('../controllers/dishesTagsController')
+const IngredientsController = require('../controllers/IngredientsController')
 
-const movieTagsRoutes = Router()
+const ingredientsRoutes = Router()
 
-const movieTagsController = new MovieTagsController()
+const ingredientsController = new IngredientsController()
 
-movieTagsRoutes.get('/:admin_id', movieTagsController.index)
+ingredientsRoutes.get('/:user_id', ingredientsController.index)
 
-module.exports = movieTagsRoutes
+module.exports = ingredientsRoutes
