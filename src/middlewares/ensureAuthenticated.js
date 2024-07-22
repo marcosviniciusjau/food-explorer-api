@@ -1,27 +1,28 @@
-const { verify } = require('jsonwebtoken')
-const AppError  = require('../utils/AppError')
-const authConfig = require('../configs/auth')
+const { verify } = require('jsonwebtoken');
+const AppError = require('../utils/AppError');
+const authConfig = require('../configs/auth');
 
 function ensureAuthenticated(request, response, next) {
-  const authHeader = request.headers 
+  const authHeader = request.headers;
 
   if (!authHeader.cookie) {
-    throw new AppError('JWT Token não informado', 401) 
+    throw new AppError('JWT token não informado', 401);
   }
 
-  const [, token] = authHeader.cookie.split('token=') 
+  const [, token] = authHeader.cookie.split('food_explorer_token=');
 
   try {
-    const { role, sub: user_id } = verify(token, authConfig.jwt.secret) 
+    const { role, sub: user_id } = verify(token, authConfig.jwt.secret);
 
     request.user = {
       id: Number(user_id),
       role
-    }
+    };
 
-    return next() 
+    return next();
   } catch {
-    throw new AppError('Token inválido', 401) 
+    throw new AppError('Invalid JWT token', 401);
   }
 }
-module.exports = ensureAuthenticated
+
+module.exports = ensureAuthenticated;

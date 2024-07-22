@@ -24,8 +24,8 @@ class SessionController {
       expiresIn
     })
 
-    response.cookie("token", token, {
-      maxAge: 15 * 60 * 1000, 
+    response.cookie("food_explorer_token", token, {
+      maxAge: 15 * 60 * 1000,
       httpOnly: true, 
       sameSite: "none",
       secure: true

@@ -1,20 +1,28 @@
 const knex = require("../database/knex")
 const AppError = require("../utils/AppError")
+const DiskStorage = require("../providers/DiskStorage") 
 class DishesController {
   async create(request, response) {
     const { name, description, category, image, ingredients } = request.body
     
-    const user_id  = request.user.id
+    const user_id  = request.user.id    
+    const photoFilename = request.file.image
+
+    const diskStorage = new DiskStorage() 
+
     const checkDishExists = await knex("dishes").where({ name: name }).orderBy("name")
   
     if (checkDishExists === name){
       throw new AppError("Este prato já existe")
     }
+    const filename = await diskStorage.saveFile(photoFilename)
+
+
     const [dish_id] = await knex("dishes").insert({
       name,
       description,
       category,
-      image,
+      image: filename,
       user_id
     })
 
@@ -50,7 +58,40 @@ class DishesController {
 
     return response.json()
   }
+  async update(request, response) {
+    const { name, description, category, image, ingredients } = request.body
+  
+    const { user } = request;
+    const photoFilename = request.file.image 
+    const diskStorage = new DiskStorage() 
 
+    const dish = await knex("dishes").where({ user_id: user.id }).first()
+   
+    if(!dish) {
+     throw new AppError("user não encontrado")
+    }
+
+    dish.name = name ?? dish.name
+    dish.description = description ?? dish.description
+    dish.category = category ?? dish.category
+  
+    if (dish.image) {
+      await diskStorage.deleteFile(dish.image) 
+    }
+
+    dish.ingredients = ingredients ?? dish.ingredients
+
+    const filename = await diskStorage.saveFile(photoFilename) 
+    dish.image = filename 
+     await knex("dishes").where({ id: user_id }).update({
+       name: dish.name,
+       description: dish.description,
+       category: dish.category,
+       ingredients: dish.ingredients
+     })
+
+   return response.json()
+ }
   async index(request, response) {
     const { name, ingredients } = request.query
 
